@@ -4,17 +4,23 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import {GameComponent} from './game/game.component';
+import {MatrixService} from './board-item/board.service';
+import {BoardItemComponent} from './board-item/board-item.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+     GameComponent,
+    BoardItemComponent
+
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [MatrixService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
