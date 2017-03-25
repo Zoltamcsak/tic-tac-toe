@@ -1,12 +1,29 @@
+$cell-size: 100px;
+
 .matrix-item {
-  height: 50px;
-  width: 50px;
+  height: $cell-size;
+  width: $cell-size;
   border: 1px solid black;
   text-align: center;
-  line-height: 50px;
-  cursor: pointer;
+  line-height: $cell-size;
 }
-
 .matrix-item:hover {
   background-color: #e6f2ff;
+}
+.empty-cell {
+  cursor: pointer;
+}
+.filled-x, .filled-o {
+  cursor: not-allowed;
+  font-size: 20px;
+  font-weight: bold;
+}
+.filled-x {
+  color: red;
+}
+.filled-o {
+  color: black;
+}
+.winning-cell {
+  background-color: #33cc33;
 }

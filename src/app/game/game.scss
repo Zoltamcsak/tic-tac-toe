@@ -1,3 +1,14 @@
 .item-row {
   display: flex;
 }
+.board {
+  margin: 20px;
+}
+.btn {
+  margin: 10px 0 10px 0;
+}
+.action, .title {
+  font-size: 20px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}

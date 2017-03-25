@@ -3,6 +3,7 @@ import {BoardItem} from './board-item';
 import {ItemState} from './item-state';
 import {GameState} from '../game/game-state';
 import {LocalStorageService} from 'angular-2-local-storage';
+
 @Injectable()
 export class MatrixService {
   public items: BoardItem[][] = [];
@@ -57,7 +58,7 @@ export class MatrixService {
     for (let i=0; i<3; i++) {
       this.items[i] = [];
       for (let j=0; j<3; j++) {
-        let item = {state: ItemState.NOTHING};
+        let item = {state: ItemState.NOTHING, winningCell: false};
         this.items[i].push(item);
       }
     }
@@ -72,6 +73,7 @@ export class MatrixService {
     if (winningPlayer === ItemState.NOTHING) {
       if (this.isDraw()) {
         this.draw = true;
+        this.gameState = GameState.DRAW;
       } else if (this.gameState === GameState.X_TURN) {
         this.gameState = GameState.O_TURN;
       } else {
@@ -118,9 +120,14 @@ export class MatrixService {
           boardLine[0].state === boardLine[2].state &&
           boardLine[1].state === boardLine[2].state) {
         resultState = boardLine[0].state;
+        this.setWinningRow(boardLine);
       }
     });
     return resultState;
+  }
+
+  public setWinningRow(row: BoardItem[]): void {
+    row.map(r => r.winningCell = true);
   }
 
   isDraw(): boolean {
