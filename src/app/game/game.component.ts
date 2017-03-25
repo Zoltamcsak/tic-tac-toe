@@ -14,8 +14,6 @@ import {GameState} from './game-state';
   styleUrls: ['game.scss']
 })
 export class GameComponent implements OnInit {
-  nrOfRows: number;
-  private nextTurn: GameState;
   constructor(public matrixService: MatrixService) {}
 
   ngOnInit(): void {
@@ -29,6 +27,7 @@ export class GameComponent implements OnInit {
   }
 
   onNewGameClicked(): void {
+    this.matrixService.localStorageService.set('board', null);
     this.matrixService.init();
   }
 

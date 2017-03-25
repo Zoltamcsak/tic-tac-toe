@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BoardItem} from './board-item';
 import {ItemState} from './item-state';
 import {GameState} from '../game/game-state';
-import {takeUntil} from 'rxjs/operator/takeUntil';
+import {LocalStorageService} from 'angular-2-local-storage';
 @Injectable()
 export class MatrixService {
   public items: BoardItem[][] = [];
@@ -11,19 +11,17 @@ export class MatrixService {
   public won: boolean;
   public draw: boolean;
 
+  constructor(public localStorageService: LocalStorageService) {}
+
   public init(): void {
     this.gameState = GameState.X_TURN;
-    for (let i=0; i<3; i++) {
-      this.items[i] = [];
-      for (let j=0; j<3; j++) {
-        let item = {state: ItemState.NOTHING};
-        this.items[i].push(item);
-      }
+    if (this.localStorageService.get('board') !== null) {
+      this.initBoardFromLocalStorage();
+      this.initGameStateFromLocalStorage();
+    } else {
+      this.initBoardManually();
+      this.initGameStateManually();
     }
-    this.boardLines = [];
-    this.setBoardLines();
-    this.won = false;
-    this.draw = false;
   }
 
   public updateBoard(item: BoardItem): void {
@@ -32,8 +30,37 @@ export class MatrixService {
     }
     this.updateGameState();
     setTimeout(() => {
-      this.computerMove()
-    }, 1000)
+      this.computerMove();
+      this.localStorageService.set('board', this.items);
+    }, 1000);
+  }
+
+  public initBoardFromLocalStorage(): void {
+    this.items = this.localStorageService.get('board') as BoardItem[][];
+  }
+
+  public initGameStateFromLocalStorage(): void {
+    this.gameState = this.localStorageService.get('gameState') as GameState;
+    this.won = this.localStorageService.get('won') as boolean;
+    this.draw = this.localStorageService.get('draw') as boolean;
+    this.boardLines = this.localStorageService.get('boardLines') as any[];
+  }
+
+  public initGameStateManually(): void {
+    this.boardLines = [];
+    this.setBoardLines();
+    this.won = false;
+    this.draw = false;
+  }
+
+  public initBoardManually(): void {
+    for (let i=0; i<3; i++) {
+      this.items[i] = [];
+      for (let j=0; j<3; j++) {
+        let item = {state: ItemState.NOTHING};
+        this.items[i].push(item);
+      }
+    }
   }
 
   public getNextState(): ItemState {
@@ -54,6 +81,14 @@ export class MatrixService {
       this.won = true;
       this.gameState = winningPlayer === ItemState.X ? GameState.X_WON : GameState.O_WON;
     }
+    this.updateLocalStorageGameState();
+  }
+
+  public updateLocalStorageGameState(): void {
+    this.localStorageService.set('gameState', this.gameState);
+    this.localStorageService.set('won', this.won);
+    this.localStorageService.set('draw', this.draw);
+    this.localStorageService.set('boardLines', this.boardLines);
   }
 
   private setBoardLines(): void {
